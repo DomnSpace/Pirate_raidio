@@ -33,7 +33,7 @@
     }
     @keyframes flicker{
       0%, 19%, 21%, 23%, 25%, 54%, 56%, 100%{ opacity:1; }
-      20%,24%,55{ opacity:0.4; }
+      20%,24%,55%{ opacity:0.4; }
     }
     #cover{
       width:220px;
@@ -68,20 +68,23 @@
   </style>
 </head>
 <body>
-  <h1>🚢 Pirate Radio 24/7 📻</h1>
+  <h1>🚢 Pirate Radio 24/7 📻</h1>
   <img id="cover" src="cover.jpg" alt="Station Cover">
-  <button id="toggle">▶︎ Play</button>
-  <audio id="radio" loop>
-    <source src="stream.mp3" type="audio/mpeg">
+  <button id="toggle">▶︎ Play</button>
+  <audio id="radio" preload="none">
     Your browser does not support the audio element.
   </audio>
   <footer>
-    Streaming from the high seas. Built with ❤ on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>
+    Streaming from the high seas via Icecast. Built with ❤ on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>
   </footer>
 
   <script>
+    const STREAM_URL = 'https://your-icecast-host:8443/radio'; // 🔀 CHANGE ME
+
     const audio = document.getElementById('radio');
     const btn   = document.getElementById('toggle');
+
+    audio.src = STREAM_URL;
 
     function togglePlay(){
       if(audio.paused){
