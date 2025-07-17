@@ -3,118 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pirate Radio – Suno Edition</title>
+  <title>Pirate Radio – Live Stream</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
     :root{
-      --bg:#050505;
-      --accent:#0ff;
-      --accent2:#f0f;
-      --text:#eee;
+      --bg:#050505;--accent:#0ff;--accent2:#f0f;--text:#eee;
     }
     *{box-sizing:border-box;}
     html,body{
-      height:100%;
-      margin:0;
-      font-family:'Press Start 2P', monospace;
-      color:var(--text);
+      height:100%;margin:0;font-family:'Press Start 2P',monospace;color:var(--text);
       background:radial-gradient(circle at center,#111 0%,#050505 100%);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      text-align:center;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
     }
-    h1{
-      font-size:2rem;
-      margin:0 0 1rem;
-      text-shadow:0 0 5px var(--accent),0 0 10px var(--accent2);
-      animation:flicker 2s infinite;
-    }
-    @keyframes flicker{
-      0%,19%,21%,23%,25%,54%,56%,100%{opacity:1;}
-      20%,24%,55%{opacity:.4;}
-    }
-    #cover{
-      width:220px;height:220px;border-radius:10px;object-fit:cover;
-      box-shadow:0 0 15px var(--accent2),0 0 30px var(--accent);
-      margin-bottom:1rem;
-    }
-    #title{margin-bottom:.5rem;font-size:1rem;}
-    button{
-      background:none;border:2px solid var(--accent);color:var(--accent);
-      padding:.8rem 2rem;font-size:1rem;border-radius:8px;cursor:pointer;
-      transition:all .3s ease;
-    }
+    h1{font-size:2rem;margin:0 0 1rem;text-shadow:0 0 5px var(--accent),0 0 10px var(--accent2);animation:flicker 2s infinite;}
+    @keyframes flicker{0%,19%,21%,23%,25%,54%,56%,100%{opacity:1;}20%,24%,55%{opacity:.4;}}
+    #cover{width:220px;height:220px;border-radius:10px;object-fit:cover;box-shadow:0 0 15px var(--accent2),0 0 30px var(--accent);margin-bottom:1rem;}
+    button{background:none;border:2px solid var(--accent);color:var(--accent);padding:.8rem 2rem;font-size:1rem;border-radius:8px;cursor:pointer;transition:all .3s ease;}
     button:hover{background:var(--accent);color:#000;box-shadow:0 0 10px var(--accent);}    
-    footer{margin-top:auto;padding:1rem 0;font-size:.75rem;opacity:.7;}
-    a{color:var(--accent2);}  
+    footer{margin-top:auto;padding:1rem 0;font-size:.75rem;opacity:.7;}a{color:var(--accent2);}  
   </style>
 </head>
 <body>
   <h1>🚢 Pirate Radio 24/7 📻</h1>
-  <p id="title">Ready to set sail…</p>
-  <img id="cover" src="cover.jpg" alt="Track cover">
+  <img id="cover" src="cover.jpg" alt="Station Cover">
   <button id="toggle">▶︎ Play</button>
   <audio id="radio" preload="none"></audio>
   <footer>
-    Streaming direct from Suno links. Built with ❤ on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>
+    Live Icecast stream. Built with ❤ on <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>
   </footer>
 
   <script>
     /**
-     * 🎶 ADD YOUR TRACKS HERE
-     *   Grab each Suno download link (they end with .mp3) and optional cover image.
-     *   The player shuffles once at startup, then loops forever.
+     * 👉 Replace STREAM_URL with your Icecast mountpoint.
+     *    Must be HTTPS for browsers to play audio inside a secure page.
+     *    Example: 'https://radio.domandsupply.com/stream' (TLS‑terminating proxy or Caddy in front of Icecast)
      */
-    const playlist = [
-      {
-        title: 'Chiptune Shores',
-        url: 'https://cdn.suno.ai/example-track-1.mp3',
-        cover: 'cover1.jpg'
-      },
-      {
-        title: 'Neon Nights',
-        url: 'https://cdn.suno.ai/example-track-2.mp3',
-        cover: 'cover2.jpg'
-      }
-      // 👉 Duplicate this object for more tracks
-    ];
-
-    // Fisher‑Yates shuffle so every page load feels live
-    function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){
-        const j=Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]]=[arr[j],arr[i]];
-      }
-    }
-    shuffle(playlist);
+    const STREAM_URL = 'https://your-domain-or-ip:8443/stream';
 
     const audio = document.getElementById('radio');
-    const cover = document.getElementById('cover');
-    const title = document.getElementById('title');
     const btn   = document.getElementById('toggle');
+    audio.src   = STREAM_URL;
 
-    let current = 0;
-
-    function loadTrack(i){
-      const track = playlist[i];
-      audio.src   = track.url;
-      title.textContent = track.title || `Track ${i+1}`;
-      if(track.cover){ cover.src = track.cover; }
-    }
-
-    function next(){
-      current = (current + 1) % playlist.length;
-      loadTrack(current);
-      audio.play();
-    }
-
-    btn.addEventListener('click',()=>{
-      // First click lazy‑loads first track
-      if(audio.paused && !audio.src){
-        loadTrack(current);
-      }
+    function togglePlay(){
       if(audio.paused){
         audio.play();
         btn.textContent='⏸︎ Pause';
@@ -122,9 +52,9 @@
         audio.pause();
         btn.textContent='▶︎ Play';
       }
-    });
+    }
 
-    audio.addEventListener('ended', next);
+    btn.addEventListener('click',togglePlay);
   </script>
 </body>
 </html>
